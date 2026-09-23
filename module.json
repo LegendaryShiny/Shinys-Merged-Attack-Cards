@@ -2,7 +2,7 @@
   "id": "shinys-merged-attack-cards",
   "title": "Shiny's Merged Attack Cards",
   "description": "Merges attack, damage and healing rolls into the activity card, so each ability or attack only produces one chat message.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "compatibility": {
     "minimum": "14",
     "verified": "14"

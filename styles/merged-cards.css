@@ -32,7 +32,7 @@
   --smac-background: color-mix(in oklab, currentColor 7%, transparent);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .card-summary .smac-heading {
@@ -58,60 +58,73 @@
   margin-inline-end: 4px;
 }
 
+/* One slim row per roll: formula on the left, result on the right */
 .card-summary .smac-entry {
+  align-items: stretch;
+  background: var(--smac-background);
+  border: 1px solid var(--smac-border);
+  border-radius: 4px;
   display: flex;
-  flex-direction: column;
+  min-block-size: 30px;
+}
+
+.card-summary .smac-entry:has(.smac-result:hover:not(:disabled)),
+.card-summary .smac-entry:has(.smac-result:focus) {
+  border-color: var(--dnd5e-color-gold);
 }
 
 .card-summary .smac-formula {
-  background: var(--smac-background);
-  border: 1px solid var(--smac-border);
-  border-block-end: none;
-  border-radius: 4px 4px 0 0;
+  align-items: center;
+  display: flex;
+  flex: 1;
   font-size: var(--font-size-12);
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
   padding: 3px 8px;
-  text-align: center;
+  text-align: start;
 }
 
 .card-summary .smac-result {
   align-items: center;
-  background: var(--smac-background);
-  border: 1px solid var(--smac-border);
-  border-radius: 0 0 4px 4px;
+  background: none;
+  block-size: auto;
+  border: none;
+  border-inline-start: 1px solid var(--smac-border);
+  border-radius: 0;
   box-shadow: none;
   color: inherit;
   display: flex;
-  gap: 10px;
-  inline-size: 100%;
-  justify-content: center;
-  min-block-size: 32px;
-  padding: 2px 28px;
-  position: relative;
+  flex: none;
+  gap: 8px;
+  inline-size: auto;
+  justify-content: flex-end;
+  min-inline-size: 84px;
+  padding: 2px 8px;
+  position: static;
 }
 
 .card-summary .smac-result:hover:not(:disabled),
 .card-summary .smac-result:focus {
-  border-color: var(--dnd5e-color-gold);
   box-shadow: none;
 }
 
 .card-summary .smac-total {
-  font-size: var(--font-size-20);
+  font-size: var(--font-size-18);
   font-weight: 700;
   line-height: 1;
+  min-inline-size: 2ch;
+  text-align: end;
 }
 
 .card-summary .smac-icons {
   font-size: var(--font-size-10);
-  inset-inline-start: 10px;
-  position: absolute;
+  position: static;
 }
 
 .card-summary .smac-chevron {
   color: var(--dnd5e-color-gold);
   font-size: var(--font-size-11);
-  inset-inline-end: 10px;
-  position: absolute;
+  position: static;
 }
 
 .card-summary .smac-result.critical .smac-total,
@@ -128,16 +141,16 @@
   align-items: center;
   display: inline-flex;
   font-family: var(--dnd5e-font-roboto-condensed, inherit);
-  font-size: var(--font-size-13);
-  gap: 5px;
+  font-size: var(--font-size-12);
+  gap: 4px;
   text-transform: capitalize;
 }
 
 .card-summary .smac-type-icon {
   background: currentColor;
-  block-size: 15px;
+  block-size: 14px;
   display: inline-block;
-  inline-size: 15px;
+  inline-size: 14px;
   -webkit-mask: var(--smac-icon) center / contain no-repeat;
   mask: var(--smac-icon) center / contain no-repeat;
 }

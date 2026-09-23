@@ -63,7 +63,7 @@ async function extendDamageContext(context) {
     part.config = config;
     part.label = config?.labelShort ?? config?.label ?? "";
     return {
-      formula: roll.formula,
+      formula: roll.formula.replace(/^\s*\+\s*/, ""),
       isPrivate,
       parts: [part],
       total: Math.max(0, roll.total),
