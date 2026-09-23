@@ -15,6 +15,86 @@ const SUMMARY_TEMPLATES = {
   healing: `modules/${MODULE_ID}/templates/damage-summary.hbs`
 };
 
+/* -------------------------------------------- */
+/*  Summary Contexts                            */
+/* -------------------------------------------- */
+
+/**
+ * Add the data needed by the attack summary template.
+ * @this {AttackMessageData}
+ * @param {object} context  Render context to extend.
+ */
+async function extendAttackContext(context) {
+  const isPrivate = !this.parent.isContentVisible;
+  const { canCrit, displayResult, forceSuccess } = this;
+  context.smacHeading = game.i18n.localize("DND5E.Attack");
+  context.attacks = await Promise.all(this.parent.rolls.map(async roll => {
+    const data = await roll._prepareChatRenderContext({
+      canCrit, displayResult, forceSuccess, isPrivate, message: this.parent
+    });
+    return {
+      classes: data.classes,
+      formula: data.formula,
+      icons: data.icons,
+      isPrivate,
+      tooltip: data.tooltip,
+      total: data.total
+    };
+  }));
+}
+
+/* -------------------------------------------- */
+
+/**
+ * Add the data needed by the damage & healing summary template, with one entry per damage type.
+ * @this {DamageMessageData}
+ * @param {object} context  Render context to extend.
+ */
+async function extendDamageContext(context) {
+  const isPrivate = !this.parent.isContentVisible;
+  context.smacHeading = this.isHealing
+    ? (CONFIG.DND5E.healingTypes.healing?.label ?? "Healing")
+    : game.i18n.localize("DND5E.Damage");
+  context.smacCritical = this.parent.rolls[0]?.isCritical === true;
+  context.damages = dnd5e.dice.aggregateDamageRolls(this.parent.rolls).map(roll => {
+    const type = roll.options.type;
+    const config = CONFIG.DND5E.damageTypes[type] ?? CONFIG.DND5E.healingTypes[type] ?? null;
+    const part = roll.aggregateTerms();
+    part.config = config;
+    part.label = config?.labelShort ?? config?.label ?? "";
+    return {
+      formula: roll.formula,
+      isPrivate,
+      parts: [part],
+      total: Math.max(0, roll.total),
+      typeIcon: config?.icon ?? "",
+      typeLabel: config?.label ?? ""
+    };
+  });
+}
+
+/* -------------------------------------------- */
+
+/**
+ * Wrap a message data model's render context preparation so that it is extended when rendering a summary.
+ * @param {string} type                  Chat message type.
+ * @param {Function} extend              Function that adds to the render context.
+ */
+function wrapContext(type, extend) {
+  const prototype = CONFIG.ChatMessage.dataModels?.[type]?.prototype;
+  if ( !prototype ) return;
+  const original = prototype._prepareContext;
+  prototype._prepareContext = async function(options) {
+    const context = await original.call(this, options);
+    if ( options?.summary ) await extend.call(this, context);
+    return context;
+  };
+}
+
+/* -------------------------------------------- */
+/*  Hooks                                       */
+/* -------------------------------------------- */
+
 Hooks.once("init", () => {
   const models = CONFIG.ChatMessage.dataModels ?? {};
 
@@ -26,6 +106,10 @@ Hooks.once("init", () => {
     }
     model.metadata = Object.freeze(foundry.utils.mergeObject(model.metadata, { summaryTemplate }, { inplace: false }));
   }
+
+  // Healing messages inherit from damage messages, so wrapping damage covers both.
+  wrapContext("attack", extendAttackContext);
+  wrapContext("damage", extendDamageContext);
 });
 
 Hooks.once("ready", () => {

@@ -1,15 +1,26 @@
-{{!-- Rolls --}}
-<section class="icon-row">
-    <i class="fa-fw fa-solid fa-dice" aria-label="{{ localize "DND5E.CHATMESSAGE.Row.Roll" }}"></i>
-    <button type="button" class="dice-roll" {{ disabled isPrivate }}>
-        <span class="result">
-            <strong class="total">{{ ifThen isPrivate "?" total }}</strong>
-        </span>
-    </button>
-    {{#unless isPrivate}}
-    <div class="roll-breakdown" popover>{{> "dnd5e.damage-breakdown" }}</div>
-    {{/unless}}
-</section>
+{{!-- Rolls, one entry per damage type --}}
+<div class="smac smac-damage">
+    <h4 class="smac-heading">
+        {{ smacHeading }}
+        {{#if smacCritical}}<span class="smac-crit">{{ localize "DND5E.Critical" }}</span>{{/if}}
+    </h4>
+    {{#each damages}}
+    <div class="smac-entry">
+        <div class="smac-formula">{{#if isPrivate}}???{{else}}{{ formula }}{{/if}}</div>
+        <button type="button" class="smac-result" {{ disabled isPrivate }}>
+            <span class="smac-total">{{ ifThen isPrivate "?" total }}</span>
+            {{#unless isPrivate}}
+            <span class="smac-type">
+                {{#if typeIcon}}<span class="smac-type-icon" style="--smac-icon: url('{{ typeIcon }}')"></span>{{/if}}
+                {{ typeLabel }}
+            </span>
+            {{/unless}}
+            <i class="fa-solid fa-chevron-right smac-chevron" inert></i>
+        </button>
+        {{#unless isPrivate}}<div class="roll-breakdown" popover>{{> "dnd5e.damage-breakdown" parts=parts }}</div>{{/unless}}
+    </div>
+    {{/each}}
+</div>
 
 {{#if showTray}}
 <damage-application class="dnd5e2"></damage-application>

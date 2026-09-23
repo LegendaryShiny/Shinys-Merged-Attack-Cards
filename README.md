@@ -6,10 +6,12 @@ Keeps every attack or ability to a single chat message. Attack rolls, damage rol
 
 ## Features
 
-- Attack rolls (including hit/miss on targets) appear inside the activity card
-- Damage and healing rolls appear inside the activity card, including the damage application tray
-- Multiple attack or damage rolls stack inside the same card
-- Deleting the activity card also removes its merged rolls
+- Attack rolls appear inside the activity card with a formula box, a result box and hit/miss per target
+- Damage and healing rolls appear inside the activity card, split by damage type with the type name and icon
+- Click a result to expand the full roll breakdown
+- The Attack and Damage buttons on the activity card are labelled
+- The damage application tray works directly from the merged card
+- Multiple rolls stack inside the same card, and deleting the card removes them all
 
 ## Requirements
 
